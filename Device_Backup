@@ -1,0 +1,22 @@
+from netmiko import ConnectHandler
+
+IP_List = open('iplist.txt')
+for IP in IP_List:
+	SWS = {'device_type': 'cisco_ios',
+	'ip': IP,
+	'username': 'xxxxxx',
+	'password': 'xxxxxx',
+	'secret': 'xxxxxx',
+	}
+	print ('\n Connected to device  :' + IP.strip() + '  \n')
+	net_connect = ConnectHandler(**SWS)
+	net_connect.enable()
+	print('\n Initiate Configuration Backup \n')
+	output1 = net_connect.send_command('show clock')
+	output2 = net_connect.send_command('show run')
+	hostname = net_connect.send_command('sh run | i hostname')
+	hostname = hostname.split()[1]
+	Save_File = open(hostname + ".txt", 'w') 
+	Save_File.write(output1 + '\n'+ output2)
+	Save_File.close    
+	print('Config Backup Taken \n')
